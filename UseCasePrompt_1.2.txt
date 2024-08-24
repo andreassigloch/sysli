@@ -1,0 +1,100 @@
+Prompt Use Case 1.2
+
+// Author: andreas@siglochconsulting.de
+// 1.0 Beschreibung Use Case aus ChatGPT Feedback komplett überarbeitet
+// 1.1 Output Format optimiert (Semikolons entfernt)
+// 1.2 Die Beispiele in der richtigen Notation direkt unter die Anforderungen gestellt
+
+
+Ein gut definierter Use Case ist entscheidend für die erfolgreiche Entwicklung von Systemen, da er klare Anforderungen und Erwartungen an das System darstellt. Hier sind die wesentlichen Anforderungen an einen gut definierten Use Case:
+
+Generiere Use Cases
+
+Der Use Case sollte einen eindeutigen und aussagekräftigen Titel haben, der den Hauptzweck beschreibt.
+Der Use Case muss klar das Ziel und die Intention des Benutzers beschreiben, also welches Ergebnis oder welche Veränderung der Benutzer erreichen möchte.
+Example:
+(:UC {UCName: "FahrzeugZugang", UCDescr:"Der Use Case Fahrzeugzugang beschreibt alle Möglichkeiten in das Fahrzeug zu gelangen oder das Fahrzeug zu verlassen"
+
+Generiere Sub-Use Cases
+
+Sub Use Cases sind für wesentliche Varianten oder Abwandlungen des Usecases hilfreich. Sie sind über eine [:contains] Beziehung mit dem übergeordneten use case verbunden
+Example:
+(:UC {UCName: "KeyCardZugang", UCDescr: "Zugang durch Verwendung einer Keycard"})
+(:UC {UCName: "SmartphoneZugang", UCDescr: "Zugang über eine Smartphone-App"})
+(:UC {UCName: "BiometrischerZugang", UCDescr: "Zugang über biometrische Daten"})
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "KeyCardZugang"})
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "SmartphoneZugang"})
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "BiometrischerZugang"})
+
+
+Generiere die beteiligten Akteure (Actors):
+
+Alle beteiligten Akteure, die mit dem System interagieren, müssen identifiziert und beschrieben werden.
+Example:
+(ACTOR: {ActName:„Fahrer“, ActDescr:„Person die das Fahrzeug betreten möchte“})
+(ACTOR: {ActName: „Passant“, ActDescr: „Beliebige Person im Umfeld des Fahrzeugs“})
+(ACTOR: {ActName: "Umwelt", ActDescr: "Die Aussentemperatur"})
+
+Generiere die Interaktion mit des Auslösers mit dem use case (Trigger)
+
+Es sollte klar beschrieben werden, welches Auslöse-Ereignis den Use Case startet. Das kann eine Benutzeraktion oder ein Umweltereignis z.B. Aussentemperatur, Querbeschleunigung sein
+Example:
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Trigger", IntDescr: "Trigger: Benutzer aktiviert biometrischen Zugang"}]->(:UC {UCName: "BiometrischerZugang"})
+
+Generiere die Interaktion des Empfängers mit dem use case (Result)
+
+Es sollte klar beschrieben werden, welche Reaktion der Empfänger des Ergebnisses des Use Case erwartet. Das kann eine optisches, haptisches oder sonstiges, wahrnehmbares, Feedback sein
+Example:
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "BiometrischerZugang"})
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "BiometrischerZugang"})
+
+
+Use case Namen, Funktionsnamen, Relationsnamen und Interaktionsnamen entsprechen den Python Namenskonventionen, sind nicht länger als 25 Zeichen, camel case
+
+erstelle als Ergebnis einen graph als Text
+Behandle den graph wie code
+
+verwende nur Elemente aus folgendem schema
+
+Node properties:
+Use Case: UC {UCName: STRING, UCDescr: STRING}
+Actor: ACTOR {ActName: STRING, ActDescr: STRING}
+
+Relationship properties:
+
+Interaktion ACTOR <-> UseCase: interacts {IntName: String, IntDescr: String}
+
+Relations:
+(:UC)-[contains]->(:UC)
+(:ACTOR)-[interacts]-(:UC)
+
+Example Output:
+
+// Haupt-Usecase
+(:UC {UCName: "FahrzeugZugang", UCDescr: "Benutzer erhält Zugang zum Fahrzeug"})
+
+// Sub-Usecases
+(:UC {UCName: "KeyCardZugang", UCDescr: "Zugang durch Verwendung einer Keycard"})
+(:UC {UCName: "SmartphoneZugang", UCDescr: "Zugang über eine Smartphone-App"})
+(:UC {UCName: "BiometrischerZugang", UCDescr: "Zugang über biometrische Daten"})
+
+// Beziehungen zwischen Haupt-Usecase und Sub-Usecases
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "KeyCardZugang"})
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "SmartphoneZugang"})
+(:UC {UCName: "FahrzeugZugang"})-[:contains]->(:UC {UCName: "BiometrischerZugang"})
+
+// Akteure
+(:ACTOR {ActName: "Benutzer", ActDescr: "Person, die Zugang zum Fahrzeug benötigt"})
+
+// Beziehungen zwischen Akteuren und Use Cases
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Trigger", IntDescr: "Trigger: Benutzer versucht, die Tür zu öffnen"}]->(:UC {UCName: "FahrzeugZugang"})
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "FahrzeugZugang"})
+
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Trigger", IntDescr: "Trigger: Benutzer hält Keycard an Fahrzeug"}]->(:UC {UCName: "KeyCardZugang"})
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "KeyCardZugang"})
+
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Trigger", IntDescr: "Trigger: Benutzer nähert sich mit Smartphone"}]->(:UC {UCName: "SmartphoneZugang"})
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "SmartphoneZugang"})
+
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Trigger", IntDescr: "Trigger: Benutzer aktiviert biometrischen Zugang"}]->(:UC {UCName: "BiometrischerZugang"})
+(:ACTOR {ActName: "Benutzer"})-[:interacts {IntName: "Result", IntDescr: "Result: Benutzer erhält Zugang"}]->(:UC {UCName: "BiometrischerZugang"})
